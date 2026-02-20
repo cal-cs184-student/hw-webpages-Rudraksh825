@@ -1,9 +1,15 @@
-<html>
+<htm>
 <head>
 	<script>
 		(function(){var s=localStorage.getItem('theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='dark'||((!s)&&d))document.documentElement.classList.add('dark');})();
 	</script>
-	<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
+	<script>
+		MathJax = {
+			tex: { inlineMath: [['\\(', '\\)'], ['$', '$']], displayMath: [['\\[', '\\]'], ['$$', '$$']] },
+			svg: { fontCache: 'global' }
+		};
+	</script>
+	<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js"></script>
 	<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<title>HW1 — CS184/284A Spring 2025</title>
@@ -134,11 +140,14 @@
 			flex-wrap: wrap;
 		}
 
-		.header-links a {
+		.header-link-label {
 			font-size: 13px;
+			color: var(--text-muted);
+		}
+
+		.header-links a {
 			color: var(--accent);
 			text-decoration: none;
-			font-weight: 500;
 		}
 
 		.header-links a:hover { text-decoration: underline; }
@@ -443,8 +452,8 @@
 		<h1>Homework 1 Write-Up</h1>
 		<p class="author">Rudraksh Awasthi</p>
 		<div class="header-links">
-			<a href="https://cal-cs184-student.github.io/hw-webpages-Rudraksh825">Report webpage</a>
-			<a href="https://github.com/cal-cs184-student/hw1-rasterizer-mklmgggg/tree/main">GitHub repository</a>
+			<span class="header-link-label">Writeup webpage: <a href="https://cal-cs184-student.github.io/hw-webpages-Rudraksh825">https://cal-cs184-student.github.io/hw-webpages-Rudraksh825</a></span>
+			<span class="header-link-label">GitHub: <a href="https://github.com/cal-cs184-student/hw1-rasterizer-mklmgggg/tree/main">https://github.com/cal-cs184-student/hw1-rasterizer-mklmgggg/tree/main</a></span>
 		</div>
 	</header>
 
@@ -466,7 +475,6 @@
 	<!-- ── Overview ── -->
 	<section class="section" id="overview">
 		<div class="section-tag">Overview</div>
-		<h2>Overview</h2>
 		<p>
 			Putting this homework together and actually using all the algorithms and policies we've learnt in class gave me a much more concrete understanding of what GPUs are doing at each operation. I have been playing video games all my life but never truly understood just how many calculations were being made every second and this homework made me realize the scale of the number of operations.
 		</p>
