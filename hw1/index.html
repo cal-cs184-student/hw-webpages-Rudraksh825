@@ -1,120 +1,496 @@
 <html>
-	<head>
-		<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
-		<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-		<style>
-			h1 {
-				text-align: center;
-			}
+<head>
+	<script>
+		(function(){var s=localStorage.getItem('theme'),d=window.matchMedia('(prefers-color-scheme: dark)').matches;if(s==='dark'||((!s)&&d))document.documentElement.classList.add('dark');})();
+	</script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.4/MathJax.js?config=default'></script>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>HW1 — CS184/284A Spring 2025</title>
+	<style>
+		*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-			.container {
-				margin: 0 auto;
-				padding: 60px 20%;
-			}
+		:root {
+			--bg: #f9f9f8;
+			--surface: #ffffff;
+			--text: #1a1a1a;
+			--text-muted: #6b6b6b;
+			--text-faint: #9b9b9b;
+			--accent: #2563eb;
+			--accent-light: rgba(37,99,235,0.07);
+			--border: #e5e5e3;
+			--border-strong: #d0d0ce;
+			--code-bg: #f3f3f1;
+			--code-color: #c62a2a;
+			--radius: 8px;
+			--radius-lg: 12px;
+			--btn-bg: #ebebea;
+			--btn-hover: #dededc;
+			--row-alt: #fafaf9;
+		}
 
-			
-			figure {
-				text-align: center;
-			}
+		html.dark {
+			--bg: #1e1e1e;
+			--surface: #2d2d2d;
+			--text: #ececec;
+			--text-muted: #999999;
+			--text-faint: #666666;
+			--accent: #5b9cf6;
+			--accent-light: rgba(91,156,246,0.1);
+			--border: #3d3d3d;
+			--border-strong: #4d4d4d;
+			--code-bg: #252525;
+			--code-color: #f28b82;
+			--btn-bg: #3a3a3a;
+			--btn-hover: #444444;
+			--row-alt: #333333;
+		}
 
-			img {
-				display: inline-block;
-				max-width: 100%;
-			}
+		/* ── Theme toggle button ── */
+		#theme-toggle {
+			position: fixed;
+			top: 18px;
+			right: 20px;
+			z-index: 100;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			padding: 7px 12px;
+			background: var(--btn-bg);
+			border: none;
+			border-radius: 100px;
+			cursor: pointer;
+			font-family: inherit;
+			font-size: 12px;
+			font-weight: 500;
+			color: var(--text-muted);
+			transition: background 0.15s, color 0.15s;
+		}
+		#theme-toggle:hover {
+			background: var(--btn-hover);
+			color: var(--text);
+		}
+		#theme-toggle svg {
+			width: 14px;
+			height: 14px;
+			flex-shrink: 0;
+		}
+		.icon-sun  { display: none; }
+		.icon-moon { display: block; }
+		html.dark .icon-sun  { display: block; }
+		html.dark .icon-moon { display: none; }
 
-			body {
-				font-family: 'Inter', sans-serif;
-			}
+		html { scroll-behavior: smooth; }
 
-			code {
-				background: #f4f4f4;
-				padding: 2px 6px;
-				border-radius: 3px;
-				font-size: 0.92em;
-			}
+		body {
+			font-family: 'Inter', system-ui, sans-serif;
+			background: var(--bg);
+			color: var(--text);
+			font-size: 15px;
+			line-height: 1.7;
+			-webkit-font-smoothing: antialiased;
+		}
 
-			pre {
-				background: #f4f4f4;
-				padding: 14px 18px;
-				border-radius: 5px;
-				overflow-x: auto;
-				font-size: 0.88em;
-				line-height: 1.5;
-			}
+		/* ── Layout ── */
+		.page {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 80px 40px 120px;
+		}
 
-			.screenshot-placeholder {
-				border: 2px dashed #aaa;
-				background: #fafafa;
-				color: #666;
-				padding: 40px 20px;
-				text-align: center;
-				border-radius: 6px;
-				font-style: italic;
-				margin: 16px 0;
-			}
+		/* ── Header ── */
+		.site-header {
+			margin-bottom: 72px;
+			padding-bottom: 40px;
+			border-bottom: 1px solid var(--border);
+		}
 
-			table {
-				width: 100%;
-				text-align: center;
-				border-collapse: collapse;
-			}
+		.site-header .label {
+			font-size: 11px;
+			font-weight: 500;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			color: var(--text-muted);
+			margin-bottom: 14px;
+		}
 
-			td {
-				padding: 8px;
-			}
+		.site-header h1 {
+			font-size: 30px;
+			font-weight: 600;
+			letter-spacing: -0.025em;
+			line-height: 1.2;
+			margin-bottom: 10px;
+		}
 
-			figcaption {
-				font-size: 0.9em;
-				color: #444;
-				margin-top: 6px;
-			}
-		</style>
-	</head>
-	<body>
-		<div class="container">
+		.author {
+			font-size: 14px;
+			color: var(--text-muted);
+			margin-bottom: 20px;
+		}
 
-		<h1>CS184/284A Spring 2025 Homework 1 Write-Up</h1>
-		<div style="text-align: center;">Rudraksh Awasthi</div>
+		.header-links {
+			display: flex;
+			gap: 20px;
+			flex-wrap: wrap;
+		}
 
-		<br>
+		.header-links a {
+			font-size: 13px;
+			color: var(--accent);
+			text-decoration: none;
+			font-weight: 500;
+		}
 
-		<a href="https://cal-cs184-student.github.io/hw-webpages-Rudraksh825">Link to report webpage</a>
+		.header-links a:hover { text-decoration: underline; }
 
-		<br>
+		/* ── TOC ── */
+		.toc {
+			background: var(--surface);
+			border: 1px solid var(--border);
+			border-radius: var(--radius-lg);
+			padding: 24px 28px;
+			margin-bottom: 64px;
+		}
 
-		<a href="https://github.com/cal-cs184-student/hw1-rasterizer-mklmgggg/tree/main">Link to github repository</a>
+		.toc-title {
+			font-size: 11px;
+			font-weight: 600;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			color: var(--text-muted);
+			margin-bottom: 14px;
+		}
 
-		<br><br>
+		.toc ol {
+			list-style: none;
+			counter-reset: toc;
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+		}
 
-		<!--
-		We've already added one heading per task, to make your write-up as navigable when grading.
-		Please fit your write-up within these sections!
-		-->
+		.toc li { counter-increment: toc; }
 
+		.toc a {
+			font-size: 14px;
+			color: var(--text);
+			text-decoration: none;
+			display: flex;
+			gap: 10px;
+			align-items: baseline;
+		}
+
+		.toc a::before {
+			content: counter(toc, decimal-leading-zero);
+			font-size: 11px;
+			font-weight: 500;
+			color: var(--text-faint);
+			flex-shrink: 0;
+			font-variant-numeric: tabular-nums;
+		}
+
+		.toc a:hover { color: var(--accent); }
+
+		/* ── Sections ── */
+		.section {
+			margin-bottom: 80px;
+		}
+
+		.section-tag {
+			display: inline-flex;
+			align-items: center;
+			gap: 6px;
+			font-size: 11px;
+			font-weight: 600;
+			letter-spacing: 0.1em;
+			text-transform: uppercase;
+			color: var(--accent);
+			background: var(--accent-light);
+			padding: 4px 10px;
+			border-radius: 100px;
+			margin-bottom: 16px;
+		}
+
+		h2 {
+			font-size: 22px;
+			font-weight: 600;
+			letter-spacing: -0.02em;
+			line-height: 1.3;
+			margin-bottom: 20px;
+			color: var(--text);
+			scroll-margin-top: 32px;
+		}
+
+		h3 {
+			font-size: 16px;
+			font-weight: 600;
+			letter-spacing: -0.01em;
+			margin-top: 36px;
+			margin-bottom: 12px;
+			color: var(--text);
+		}
+
+		h4 {
+			font-size: 14px;
+			font-weight: 600;
+			margin-top: 28px;
+			margin-bottom: 10px;
+			color: var(--text);
+		}
+
+		p { margin-bottom: 14px; }
+		p:last-child { margin-bottom: 0; }
+
+		ul, ol {
+			padding-left: 20px;
+			margin-bottom: 14px;
+		}
+
+		li { margin-bottom: 6px; }
+		li:last-child { margin-bottom: 0; }
+
+		/* ── Inline code & pre ── */
+		code {
+			font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+			font-size: 12.5px;
+			background: var(--code-bg);
+			padding: 2px 6px;
+			border-radius: 4px;
+			color: var(--code-color);
+		}
+
+		pre {
+			font-family: 'JetBrains Mono', 'Fira Mono', monospace;
+			font-size: 12.5px;
+			background: var(--surface);
+			border: 1px solid var(--border);
+			border-radius: var(--radius);
+			padding: 18px 20px;
+			overflow-x: auto;
+			line-height: 1.65;
+			margin: 18px 0;
+			color: var(--text);
+		}
+
+		pre code {
+			background: none;
+			padding: 0;
+			color: inherit;
+			font-size: inherit;
+		}
+
+		kbd {
+			font-family: 'JetBrains Mono', monospace;
+			font-size: 11.5px;
+			background: var(--surface);
+			border: 1px solid var(--border-strong);
+			border-bottom-width: 2px;
+			border-radius: 4px;
+			padding: 1px 6px;
+			color: var(--text);
+		}
+
+		/* ── Figures & images ── */
+		figure {
+			margin: 28px 0;
+			text-align: center;
+		}
+
+		figure img {
+			max-width: 100%;
+			border-radius: var(--radius);
+			border: 1px solid var(--border);
+		}
+
+		figcaption {
+			font-size: 12.5px;
+			color: var(--text-muted);
+			margin-top: 10px;
+			line-height: 1.5;
+		}
+
+		/* ── Image grids ── */
+		.img-grid-2x2 {
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+			gap: 16px;
+			margin: 28px 0;
+		}
+
+		.img-grid-3 {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			gap: 16px;
+			margin: 28px 0;
+		}
+
+		.img-cell {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			gap: 8px;
+		}
+
+		.img-cell img {
+			width: 100%;
+			border-radius: var(--radius);
+			border: 1px solid var(--border);
+			display: block;
+		}
+
+		.img-cell figcaption {
+			font-size: 12px;
+			color: var(--text-muted);
+			text-align: center;
+		}
+
+		/* ── Tables ── */
+		.table-wrap {
+			overflow-x: auto;
+			margin: 24px 0;
+			border-radius: var(--radius-lg);
+			border: 1px solid var(--border);
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+			font-size: 13.5px;
+			background: var(--surface);
+			border-radius: var(--radius-lg);
+			overflow: hidden;
+		}
+
+		thead tr {
+			background: #f5f5f3;
+		}
+
+		th {
+			padding: 12px 16px;
+			font-weight: 600;
+			font-size: 12px;
+			letter-spacing: 0.03em;
+			color: var(--text-muted);
+			text-align: left;
+			border-bottom: 1px solid var(--border);
+		}
+
+		td {
+			padding: 11px 16px;
+			border-bottom: 1px solid var(--border);
+			vertical-align: top;
+			line-height: 1.55;
+		}
+
+		tr:last-child td { border-bottom: none; }
+		tbody tr:nth-child(even) { background: var(--row-alt); }
+
+		/* ── Divider ── */
+		.divider {
+			height: 1px;
+			background: var(--border);
+			margin: 64px 0;
+		}
+
+		/* ── Callout ── */
+		.callout {
+			background: var(--surface);
+			border: 1px solid var(--border);
+			border-left: 3px solid var(--accent);
+			border-radius: var(--radius);
+			padding: 16px 20px;
+			margin: 20px 0;
+			font-size: 14px;
+			color: var(--text);
+		}
+
+		a {
+			color: var(--accent);
+			text-decoration: none;
+		}
+
+		a:hover { text-decoration: underline; }
+
+		@media (max-width: 600px) {
+			.page { padding: 48px 20px 80px; }
+			.img-grid-2x2 { grid-template-columns: 1fr; }
+			.img-grid-3 { grid-template-columns: 1fr 1fr; }
+			h2 { font-size: 19px; }
+			.site-header h1 { font-size: 24px; }
+		}
+	</style>
+</head>
+<body>
+	<button id="theme-toggle" aria-label="Toggle dark mode">
+		<!-- moon (shown in light mode) -->
+		<svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+		</svg>
+		<!-- sun (shown in dark mode) -->
+		<svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<circle cx="12" cy="12" r="5"/>
+			<line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+			<line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+			<line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+			<line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+		</svg>
+	</button>
+<div class="page">
+
+	<!-- ── Site Header ── -->
+	<header class="site-header">
+		<p class="label">CS184/284A &middot; Spring 2025</p>
+		<h1>Homework 1 Write-Up</h1>
+		<p class="author">Rudraksh Awasthi</p>
+		<div class="header-links">
+			<a href="https://cal-cs184-student.github.io/hw-webpages-Rudraksh825">Report webpage</a>
+			<a href="https://github.com/cal-cs184-student/hw1-rasterizer-mklmgggg/tree/main">GitHub repository</a>
+		</div>
+	</header>
+
+	<!-- ── Table of Contents ── -->
+	<nav class="toc">
+		<p class="toc-title">Contents</p>
+		<ol>
+			<li><a href="#overview">Overview</a></li>
+			<li><a href="#task1">Task 1 — Rasterizing Triangles</a></li>
+			<li><a href="#task2">Task 2 — Supersampling</a></li>
+			<li><a href="#task3">Task 3 — Transforms</a></li>
+			<li><a href="#task4">Task 4 — Barycentric Coordinates</a></li>
+			<li><a href="#task5">Task 5 — Pixel Sampling</a></li>
+			<li><a href="#task6">Task 6 — Level Sampling (Mipmapping)</a></li>
+			<li><a href="#task7">Task 7 — Galactic Spiral</a></li>
+		</ol>
+	</nav>
+
+	<!-- ── Overview ── -->
+	<section class="section" id="overview">
+		<div class="section-tag">Overview</div>
 		<h2>Overview</h2>
 		<p>
-			Putting this homework together and actually using all the algorithms and policies we've learnt in class gave me a much more concrete understanding of what GPUs are doing at each operation. I have been playing video games all my life but never truly understood just how many calculations were being made every second and this homework made me realize the scale of the number of operations. 
+			Putting this homework together and actually using all the algorithms and policies we've learnt in class gave me a much more concrete understanding of what GPUs are doing at each operation. I have been playing video games all my life but never truly understood just how many calculations were being made every second and this homework made me realize the scale of the number of operations.
+		</p>
+		<p>
 			I was also taken aback by seeing how dramatically supersampling and bilinear filtering clean up jagged edges and blurry textures.
 		</p>
+	</section>
 
-		<!-- ============================================================ -->
-		<h2>Task 1</h2>
+	<!-- ── Task 1 ── -->
+	<section class="section" id="task1">
+		<div class="section-tag">Task 1</div>
+		<h2>Rasterizing Triangles</h2>
 
-		<h3>Rasterizing triangles</h3>
+		<ul>
+			<li>For every pixel whose center lands inside (or on the boundary of) the triangle, fill it with the triangle's color.</li>
+			<li>Be careful not to waste time on pixels that cannot possibly be inside the triangle (i.e., restrict checks to the triangle's bounding box).</li>
+			<li>Ensure the inside/outside test is robust for both clockwise and counterclockwise winding orders.</li>
+		</ul>
+
+		<h3>Step 1 — Computing a bounding box</h3>
 		<p>
-			<ul>
-				<li>For every pixel whose center lands inside (or on the boundary of) the triangle, fill it with the triangle's color.</li>
-				<li>Be careful not to waste time on pixels that cannot possibly be inside the triangle (i.e., restrict checks to the triangle's bounding box).</li>
-				<li>Ensure the inside/outside test is robust for both clockwise and counterclockwise winding orders.</li>
-			</ul>
+			Given the three triangle vertices \((x_0,y_0), (x_1,y_1), (x_2,y_2)\), we compute the smallest axis-aligned bounding box:
 		</p>
-
-		<h4>Step 1 — Computing a bounding box</h4>
-		<p>
-			Given the three triangle vertices \((x_0,y_0), (x_1,y_1), (x_2,y_2)\), we can compute the smallest axis-aligned bounding box that contains them:
-		</p>
-		<pre>
-min_x = floor( min(x0, x1, x2) )
+		<pre>min_x = floor( min(x0, x1, x2) )
 max_x =  ceil( max(x0, x1, x2) )
 min_y = floor( min(y0, y1, y2) )
 max_y =  ceil( max(y0, y1, y2) )</pre>
@@ -122,7 +498,7 @@ max_y =  ceil( max(y0, y1, y2) )</pre>
 			These bounds are clamped to stay within <code>[0, width-1]</code> and <code>[0, height-1]</code> to avoid out-of-bounds errors.
 		</p>
 
-		<h4>Step 2 — Inside-triangle test</h4>
+		<h3>Step 2 — Inside-triangle test</h3>
 		<p>
 			For each pixel in the bounding box, I test whether its center \((x+0.5, y+0.5)\) is inside the triangle using the signed edge function:
 		</p>
@@ -131,308 +507,168 @@ max_y =  ceil( max(y0, y1, y2) )</pre>
 			A point is inside if all three edge functions (one per triangle edge) are the same sign or zero.
 		</p>
 
-		<h4>Step 3 — Handling winding order</h4>
+		<h3>Step 3 — Handling winding order</h3>
 		<p>
-			The order of the vertices might be clockwise or counter-clockwise, so I check the triangle area sign. If it’s positive, the edge values should all be <code>&ge; 0</code>; if negative, all should be <code>&le; 0</code>. This includes points exactly on the edge.
+			The order of the vertices might be clockwise or counter-clockwise, so I check the triangle area sign. If it's positive, the edge values should all be <code>&ge; 0</code>; if negative, all should be <code>&le; 0</code>. This includes points exactly on the edge.
 		</p>
 
-		<h4>Step 4 — Filling the pixel</h4>
+		<h3>Step 4 — Filling the pixel</h3>
 		<p>
-			If the point is inside, I call <code>fill_pixel(x, y, color)</code> just like in the point rasterization example.
-		<br><br>
-			This method visits each pixel within the bounding box once, and does an \(O(1)\) test per pixel, so it is as efficient as a basic bounding box check and does not do any extra work.
+			If the point is inside, I call <code>fill_pixel(x, y, color)</code>. This method visits each pixel within the bounding box once, and does an \(O(1)\) test per pixel — as efficient as a basic bounding box check.
 		</p>
-
-		<h3>basic/test4.svg</h3>
 
 		<figure>
 			<img src="../HW1_Screenshots/T1_S1.png" alt="Screenshot of basic/test4.svg, default view with pixel inspector on thin triangle tip.">
-			<figcaption>
-				<code>basic/test4.svg</code> — default view
-			</figcaption>
+			<figcaption><code>basic/test4.svg</code> — default view, pixel inspector on thin triangle tip.</figcaption>
 		</figure>
-		<h3>Extra Credit:</h3>
+
+		<h3>Extra Credit</h3>
 		<p>
-			For extra credit, I sped up triangle rasterization by avoiding redundant work in the inner loop. Using the linearity of the edge function, I precompute its constant increments and update edge values via addition as I traverse pixels, eliminating multiplications. I also normalize triangle winding in advance, so each pixel can use a single inside-test branch. Buffer writes were streamlined by incrementing direct pointers instead of recalculating indices, and bounding box checks skip out-of-bounds triangles early.
+			I sped up triangle rasterization by avoiding redundant work in the inner loop. Using the linearity of the edge function, I precompute its constant increments and update edge values via addition as I traverse pixels, eliminating multiplications. I also normalize triangle winding in advance, so each pixel can use a single inside-test branch. Buffer writes were streamlined by incrementing direct pointers instead of recalculating indices, and bounding box checks skip out-of-bounds triangles early.
 		</p>
 		<p>
-			I performed benchmarks by rendering 10 triangles across 2,000 iterations. These optimizations approximately doubled the performance at <code>-O0</code> optimization level, and provided a smaller but measurable improvement at <code>-O3</code>. See the table below for detailed results. (<code>-O0</code>: naive 27.6ms, optimized 11.1ms; <code>-O3</code>: naive 2.47ms, optimized 2.22ms.)
+			I performed benchmarks by rendering 10 triangles across 2,000 iterations. These optimizations approximately doubled the performance at <code>-O0</code> optimization level, and provided a smaller but measurable improvement at <code>-O3</code>.
 		</p>
 
-		<br><br>
-
-        <div style="display: flex; flex-direction: column; align-items: center;">
-			<table style="width:90%; border: 1px solid #ccc; border-collapse: collapse; font-size:0.95em;">
+		<div class="table-wrap">
+			<table>
 				<thead>
-				<tr style="background:#f0f0f0;">
-					<th style="border:1px solid #ccc; padding:8px 14px;">Build flags</th>
-					<th style="border:1px solid #ccc; padding:8px 14px;">Naive (ms / pass)</th>
-					<th style="border:1px solid #ccc; padding:8px 14px;">Optimized (ms / pass)</th>
-					<th style="border:1px solid #ccc; padding:8px 14px;">Speedup</th>
-				</tr>
+					<tr>
+						<th>Build flags</th>
+						<th>Naive (ms/pass)</th>
+						<th>Optimized (ms/pass)</th>
+						<th>Speedup</th>
+					</tr>
 				</thead>
 				<tbody>
-				<tr>
-					<td style="border:1px solid #ccc; padding:8px 14px;"><code>-O0</code> (Debug)</td>
-					<td style="border:1px solid #ccc; padding:8px 14px;">27.59</td>
-					<td style="border:1px solid #ccc; padding:8px 14px;">11.09</td>
-					<td style="border:1px solid #ccc; padding:8px 14px;"><strong>2.49×</strong></td>
-				</tr>
-				<tr style="background:#fafafa;">
-					<td style="border:1px solid #ccc; padding:8px 14px;"><code>-O3</code> (Release)</td>
-					<td style="border:1px solid #ccc; padding:8px 14px;">2.47</td>
-					<td style="border:1px solid #ccc; padding:8px 14px;">2.22</td>
-					<td style="border:1px solid #ccc; padding:8px 14px;"><strong>1.11×</strong></td>
-				</tr>
+					<tr>
+						<td><code>-O0</code> (Debug)</td>
+						<td>27.59</td>
+						<td>11.09</td>
+						<td><strong>2.49&times;</strong></td>
+					</tr>
+					<tr>
+						<td><code>-O3</code> (Release)</td>
+						<td>2.47</td>
+						<td>2.22</td>
+						<td><strong>1.11&times;</strong></td>
+					</tr>
 				</tbody>
 			</table>
-			</div>
-			<p style="font-size:0.88em; color:#555; text-align:center; margin-top:6px;">
-			</p>
+		</div>
+	</section>
 
-
-
-
-		<br><br><br><br><br>
-
-
-
-
-
-
-
-
-
-
-
-
-		
-
-		<!-- ============================================================ -->
-		<h2>Task 2</h2>
+	<!-- ── Task 2 ── -->
+	<section class="section" id="task2">
+		<div class="section-tag">Task 2</div>
+		<h2>Supersampling</h2>
 
 		<h3>Algorithm and data structures</h3>
 		<p>
-			The key data structure is <code>sample_buffer</code>, a
-			<code>std::vector&lt;Color&gt;</code> of size
-			<code>width &times; height &times; sample_rate</code>.
-			Each pixel <em>(x, y)</em> owns a contiguous block of
-			<code>sample_rate</code> Color entries starting at index
-			<code>(y &middot; width + x) &middot; sample_rate</code>.
-			Within that block, slot <em>i</em> holds the colour recorded at the
-			<em>i</em>-th within-pixel sample location.
+			The key data structure is <code>sample_buffer</code>, a <code>std::vector&lt;Color&gt;</code> of size <code>width &times; height &times; sample_rate</code>. Each pixel <em>(x, y)</em> owns a contiguous block of <code>sample_rate</code> Color entries starting at index <code>(y &middot; width + x) &middot; sample_rate</code>. Within that block, slot <em>i</em> holds the colour recorded at the <em>i</em>-th within-pixel sample location.
 		</p>
 		<p>
-			The within-pixel sample positions are precomputed once into
-			<code>sample_offsets</code>, a vector of <em>r</em> fractional
-			<em>(dx, dy)</em> pairs in <em>[0,1)<sup>2</sup></em>.
-			For the default <strong>grid</strong> pattern with
-			<em>s = &radic;r</em> subdivisions per side, the offsets are
-			the regular centres
-			<span style="white-space:nowrap;">( (i + 0.5)/s , (j + 0.5)/s )</span>.
-			Changing <code>sample_rate</code> or the sampling pattern
-			rebuilds these offsets and resizes the buffer automatically.
+			The within-pixel sample positions are precomputed once into <code>sample_offsets</code>, a vector of <em>r</em> fractional <em>(dx, dy)</em> pairs in <em>[0,1)<sup>2</sup></em>. For the default <strong>grid</strong> pattern with <em>s = &radic;r</em> subdivisions per side, the offsets are the regular centres <span style="white-space:nowrap;">( (i + 0.5)/s , (j + 0.5)/s )</span>. Changing <code>sample_rate</code> or the sampling pattern rebuilds these offsets and resizes the buffer automatically.
 		</p>
 
 		<h3>Pipeline modifications</h3>
 		<ul>
 			<li>
-				<strong><code>set_sample_rate</code> /
-				<code>set_framebuffer_target</code></strong> —
-				both resize <code>sample_buffer</code> to
-				<code>width &times; height &times; sample_rate</code>
-				and call <code>rebuild_sample_offsets()</code>.
+				<strong><code>set_sample_rate</code> / <code>set_framebuffer_target</code></strong> — both resize <code>sample_buffer</code> to <code>width &times; height &times; sample_rate</code> and call <code>rebuild_sample_offsets()</code>.
 			</li>
 			<li>
-				<strong><code>rasterize_triangle</code></strong> —
-				iterates over every pixel in the bounding box.
-				For each pixel it loops over all <em>r</em> precomputed offsets,
-				evaluates the three edge functions at <em>(px+dx, py+dy)</em>
-				using incremental arithmetic (no per-sample multiplications),
-				and writes the triangle colour into
-				<code>sample_buffer[pixel_base + i]</code> if the sample is inside.
+				<strong><code>rasterize_triangle</code></strong> — iterates over every pixel in the bounding box. For each pixel it loops over all <em>r</em> precomputed offsets, evaluates the three edge functions at <em>(px+dx, py+dy)</em> using incremental arithmetic (no per-sample multiplications), and writes the triangle colour into <code>sample_buffer[pixel_base + i]</code> if the sample is inside.
 			</li>
 			<li>
-				<strong><code>fill_pixel</code></strong> —
-				used by points and lines, writes the same colour into all <em>r</em>
-				slots of the target pixel so they render at full intensity regardless
-				of sample rate.
+				<strong><code>fill_pixel</code></strong> — used by points and lines, writes the same colour into all <em>r</em> slots of the target pixel so they render at full intensity regardless of sample rate.
 			</li>
 			<li>
-				<strong><code>resolve_to_framebuffer</code></strong> —
-				for each output pixel sums all <em>r</em> Color slots, divides by
-				<em>r</em>, rounds to 8-bit, and writes to
-				<code>rgb_framebuffer_target</code>.
-				This is the only place the sample buffer touches the display.
+				<strong><code>resolve_to_framebuffer</code></strong> — for each output pixel sums all <em>r</em> Color slots, divides by <em>r</em>, rounds to 8-bit, and writes to <code>rgb_framebuffer_target</code>. This is the only place the sample buffer touches the display.
 			</li>
 		</ul>
 
 		<h3>Why supersampling antialiases triangles</h3>
 		<p>
-			With a single sample at the pixel centre the rasterizer makes a binary
-			inside/outside decision for every pixel.  Pixels that straddle a triangle
-			edge are either fully coloured or fully white — no intermediate value is
-			possible.  This binary snap is the root cause of the staircase
-			(jagged) aliasing visible on diagonal and thin edges.
+			With a single sample at the pixel centre the rasterizer makes a binary inside/outside decision for every pixel. Pixels that straddle a triangle edge are either fully coloured or fully white — no intermediate value is possible. This binary snap is the root cause of the staircase (jagged) aliasing visible on diagonal and thin edges.
 		</p>
 		<p>
-			Supersampling approximates the true fractional area of a pixel that lies
-			inside the triangle by averaging <em>r</em> binary inside/outside tests
-			spread across the pixel.  A pixel that is 3/4 inside receives three
-			passing samples and resolves to 75% of the triangle colour — a soft
-			grey-to-colour gradient instead of a hard step.  The more samples we use,
-			the finer the coverage estimate and the smoother the edge.
+			Supersampling approximates the true fractional area of a pixel that lies inside the triangle by averaging <em>r</em> binary inside/outside tests spread across the pixel. A pixel that is 3/4 inside receives three passing samples and resolves to 75% of the triangle colour — a soft grey-to-colour gradient instead of a hard step. The more samples we use, the finer the coverage estimate and the smoother the edge.
 		</p>
 
-
-
-		<div style="display: flex; flex-direction: column; align-items: center;">
-			<table>
-			  <tr>
-				<td style="text-align:center; border-right: 2px solid #ccc; padding-right: 16px; border-bottom: 2px solid #ccc; padding-bottom: 16px;">
-				  <img src="../HW1_Screenshots/T2S1.png" alt="Screenshot: test4.svg sample rate 1" style="max-width:100%;"><br>
-				  <figcaption><code>test4.svg</code> — sample rate <strong>1</strong></figcaption>
-				</td>
-				<td style="text-align:center; padding-left: 16px; border-bottom: 2px solid #ccc; padding-bottom: 16px;">
-				  <img src="../HW1_Screenshots/T2S2.png" alt="Screenshot: test4.svg sample rate 4" style="max-width:100%;"><br>
-				  <figcaption><code>test4.svg</code> — sample rate <strong>4</strong></figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="text-align:center; border-right: 2px solid #ccc; padding-right: 16px; padding-top: 16px;">
-				  <img src="../HW1_Screenshots/T2S3.png" alt="Screenshot: test4.svg sample rate 9" style="max-width:100%;"><br>
-				  <figcaption><code>test4.svg</code> — sample rate <strong>9</strong></figcaption>
-				</td>
-				<td style="text-align:center; padding-left: 16px; padding-top: 16px;">
-				  <img src="../HW1_Screenshots/T2S4.png" alt="Screenshot: test4.svg sample rate 16" style="max-width:100%;"><br>
-				  <figcaption><code>test4.svg</code> — sample rate <strong>16</strong></figcaption>
-				</td>
-			  </tr>
-			</table>
+		<div class="img-grid-2x2">
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T2S1.png" alt="test4.svg sample rate 1">
+				<figcaption><code>test4.svg</code> — sample rate <strong>1</strong></figcaption>
+			</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T2S2.png" alt="test4.svg sample rate 4">
+				<figcaption><code>test4.svg</code> — sample rate <strong>4</strong></figcaption>
+			</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T2S3.png" alt="test4.svg sample rate 9">
+				<figcaption><code>test4.svg</code> — sample rate <strong>9</strong></figcaption>
+			</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T2S4.png" alt="test4.svg sample rate 16">
+				<figcaption><code>test4.svg</code> — sample rate <strong>16</strong></figcaption>
+			</div>
 		</div>
 
 		<p>
-			<strong>Why these results occur:</strong>
-			At rate 1 the single pixel-centre sample either lands inside or outside
-			the triangle — no middle ground.  At the very tip of a thin triangle the
-			pixel centres straddle the edge and often miss it entirely, producing
-			isolated white gaps.  At rate 4 we take a 2&times;2 grid of samples per
-			pixel; pixels near the tip now have 1, 2, or 3 passing samples, resolving
-			to 25%, 50%, or 75% of the triangle colour — a visible gradient that
-			fills in the missing tip.  Rate 9 (3&times;3) and rate 16 (4&times;4)
-			provide still finer coverage estimates with more possible intermediate
-			shades, pushing the edge gradient closer and closer to the continuous ideal.
+			<strong>Why these results occur:</strong> At rate 1 the single pixel-centre sample either lands inside or outside the triangle — no middle ground. At the very tip of a thin triangle the pixel centres straddle the edge and often miss it entirely, producing isolated white gaps. At rate 4 we take a 2&times;2 grid of samples per pixel; pixels near the tip now have 1, 2, or 3 passing samples, resolving to 25%, 50%, or 75% of the triangle colour — a visible gradient that fills in the missing tip. Rate 9 (3&times;3) and rate 16 (4&times;4) provide still finer coverage estimates with more possible intermediate shades, pushing the edge gradient closer and closer to the continuous ideal.
 		</p>
 
-
-
-
-
-		<!-- ---- Extra Credit: Alternative Sampling Patterns ---- -->
 		<h3>Extra Credit: Jittered and Halton Low-Discrepancy Sampling</h3>
-
 		<p>
-			I implemented both the additional within-pixel sampling patterns beyond the
-			regular grid.  Press <kbd>N</kbd> at runtime to cycle
-			<em>Grid &rarr; Jittered &rarr; Halton &rarr; Grid</em>;
-			the active pattern is shown in the window title and the terminal log.
+			I implemented both additional within-pixel sampling patterns beyond the regular grid. Press <kbd>N</kbd> at runtime to cycle <em>Grid &rarr; Jittered &rarr; Halton &rarr; Grid</em>; the active pattern is shown in the window title and the terminal log.
 		</p>
 
 		<h4>The three patterns</h4>
 		<ul>
 			<li>
-				<strong>Grid</strong> (default) — regular
-				\(\sqrt{r} \times \sqrt{r}\) grid, centres at
-				\(\bigl(\frac{i+0.5}{s},\;\frac{j+0.5}{s}\bigr)\).
-				Predictable and fast, but its periodicity can resonate with
-				periodic scene features and create structured Moiré aliasing.
+				<strong>Grid</strong> (default) — regular \(\sqrt{r} \times \sqrt{r}\) grid, centres at \(\bigl(\frac{i+0.5}{s},\;\frac{j+0.5}{s}\bigr)\). Predictable and fast, but its periodicity can resonate with periodic scene features and create structured Moiré aliasing.
 			</li>
 			<li>
-				<strong>Jittered (stratified)</strong> — the pixel is still divided
-				into \(s \times s\) strata, but each sample is randomly displaced
-				within its own cell: \(\bigl(\frac{i+\xi_x}{s},\;\frac{j+\xi_y}{s}\bigr)\)
-				with \(\xi \in [0,1)^2\) drawn from a fixed seed.
-				Stratification preserves uniform coverage on average while the
-				random offset breaks periodicity.
+				<strong>Jittered (stratified)</strong> — the pixel is still divided into \(s \times s\) strata, but each sample is randomly displaced within its own cell: \(\bigl(\frac{i+\xi_x}{s},\;\frac{j+\xi_y}{s}\bigr)\) with \(\xi \in [0,1)^2\) drawn from a fixed seed. Stratification preserves uniform coverage on average while the random offset breaks periodicity.
 			</li>
 			<li>
-				<strong>Halton low-discrepancy sequence</strong> — sample \(i\) is
-				placed at \(\bigl(H_2(i),\;H_3(i)\bigr)\) where \(H_b\) is the
-				radical-inverse in base \(b\):
+				<strong>Halton low-discrepancy sequence</strong> — sample \(i\) is placed at \(\bigl(H_2(i),\;H_3(i)\bigr)\) where \(H_b\) is the radical-inverse in base \(b\):
 				\[H_b(i) = \sum_k d_k\, b^{-(k+1)},\quad i = \sum_k d_k b^k\]
-				Base-2 and base-3 sequences are mutually incommensurate, giving
-				very low discrepancy — the joint sequence fills the unit square
-				more uniformly than either random or grid sampling.  It has
-				<em>zero periodicity</em>, so it cannot resonate with scene content.
+				Base-2 and base-3 sequences are mutually incommensurate, giving very low discrepancy — the joint sequence fills the unit square more uniformly than either random or grid sampling. It has <em>zero periodicity</em>, so it cannot resonate with scene content.
 			</li>
 		</ul>
 
 		<p>
-			All three modes share the same buffer layout
-			<code>sample_buffer[(y&middot;W+x)&middot;r + i]</code>
-			and the same <code>resolve_to_framebuffer</code> averaging pass.
-			In <code>rasterize_triangle</code> the incremental edge values are seeded
-			at the pixel corner; each sample adds
-			<code>ox&middot;(dE/dx) + oy&middot;(dE/dy)</code> — an exact evaluation
-			at any fractional offset with no extra multiplications.
+			All three modes share the same buffer layout <code>sample_buffer[(y&middot;W+x)&middot;r + i]</code> and the same <code>resolve_to_framebuffer</code> averaging pass. In <code>rasterize_triangle</code> the incremental edge values are seeded at the pixel corner; each sample adds <code>ox&middot;(dE/dx) + oy&middot;(dE/dy)</code> — an exact evaluation at any fractional offset with no extra multiplications.
 		</p>
 
 		<h4>Aliasing test scene — <code>svg/basic/aliasing_test.svg</code></h4>
 		<p>
-			I asked Claude to generate an SVG with relatively small separations and follow the 
-			said specs such that a Moiré false contour occurs even at rate 16.
-			Jittered sampling softens this because the per-cell random offset
-			breaks the integer row alignment.  Halton eliminates it entirely because
-			its aperiodic sequence always straddles the boundary and correctly
-			measures partial coverage.
+			I asked Claude to generate an SVG with relatively small separations and follow the said specs such that a Moiré false contour occurs even at rate 16. Jittered sampling softens this because the per-cell random offset breaks the integer row alignment. Halton eliminates it entirely because its aperiodic sequence always straddles the boundary and correctly measures partial coverage.
 		</p>
 
-
-		<div style="display: flex; flex-direction: row; justify-content: center; align-items: flex-start; gap: 32px; margin: 24px 0;">
-			<div style="text-align: center;">
-				<img src="../HW1_Screenshots/T2ECS1.png" alt="Grid rate 16 - Moiré aliasing persists" style="max-width: 260px; border-radius: 6px; border: 1px solid #ccc;">
-				<figcaption style="font-size: 0.9em; color: #444; margin-top: 6px;">
-					Grid, rate 16 — Moiré aliasing persists
-				</figcaption>
-				<div style="font-size: 0.86em; color: #555; margin-top: 8px;">
-				</div>
+		<div class="img-grid-3">
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T2ECS1.png" alt="Grid rate 16 - Moiré aliasing persists">
+				<figcaption>Grid, rate 16 — Moiré aliasing persists</figcaption>
 			</div>
-			<div style="text-align: center;">
-				<img src="../HW1_Screenshots/T2ECS2.png" alt="Jittered rate 16 - boundary softened" style="max-width: 260px; border-radius: 6px; border: 1px solid #ccc;">
-				<figcaption style="font-size: 0.9em; color: #444; margin-top: 6px;">
-					Jittered, rate 16 — boundary softened
-				</figcaption>
-				<div style="font-size: 0.86em; color: #555; margin-top: 8px;">
-				</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T2ECS2.png" alt="Jittered rate 16 - boundary softened">
+				<figcaption>Jittered, rate 16 — boundary softened</figcaption>
 			</div>
-			<div style="text-align: center;">
-				<img src="../HW1_Screenshots/T2ECS3.png" alt="Halton rate 16 - alias eliminated" style="max-width: 260px; border-radius: 6px; border: 1px solid #ccc;">
-				<figcaption style="font-size: 0.9em; color: #444; margin-top: 6px;">
-					Halton, rate 16 — alias eliminated
-				</figcaption>
-				<div style="font-size: 0.86em; color: #555; margin-top: 8px;">
-				</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T2ECS3.png" alt="Halton rate 16 - alias eliminated">
+				<figcaption>Halton, rate 16 — alias eliminated</figcaption>
 			</div>
 		</div>
+	</section>
 
-
-		<br><br><br><br><br>
-
-
-
-
-
-
-
-
-
-
-
-		<!-- ============================================================ -->
-		<h2>Task 3</h2>
+	<!-- ── Task 3 ── -->
+	<section class="section" id="task3">
+		<div class="section-tag">Task 3</div>
+		<h2>Transforms</h2>
 
 		<h3>Implementation</h3>
-
 		<ul>
 			<li>
 				<strong>translate(dx, dy)</strong>: moves points by <em>(dx, dy)</em>
@@ -448,30 +684,24 @@ max_y =  ceil( max(y0, y1, y2) )</pre>
 			</li>
 		</ul>
 
-
 		<h3>My Robot: Cubeman Waving</h3>
 		<p>
-			I posed the robot so the right arm is raised and curled (wave), the left arm hangs gently, and the legs stride forward/back. Each limb is rotated at its joint (shoulder/hip/elbow/knee), keeping all segments connected. Briefly:
+			I posed the robot so the right arm is raised and curled (wave), the left arm hangs gently, and the legs stride forward/back. Each limb is rotated at its joint (shoulder/hip/elbow/knee), keeping all segments connected.
 		</p>
 		<ul>
-			<li><strong>Right arm:</strong> Rotated −110° at the shoulder, plus −30° at the elbow for curling the wave.</li>
+			<li><strong>Right arm:</strong> Rotated &minus;110° at the shoulder, plus &minus;30° at the elbow for curling the wave.</li>
 			<li><strong>Left arm:</strong> Rotated +20° at the shoulder, bent +20° at the elbow.</li>
-			<li><strong>Left leg:</strong> Rotated −20° at the hip, bent +25° at the knee (stepping forward).</li>
-			<li><strong>Right leg:</strong> Rotated +15° at the hip, bent −10° at the knee (stepping back).</li>
+			<li><strong>Left leg:</strong> Rotated &minus;20° at the hip, bent +25° at the knee (stepping forward).</li>
+			<li><strong>Right leg:</strong> Rotated +15° at the hip, bent &minus;10° at the knee (stepping back).</li>
 		</ul>
-		<p>
-			Rotations are applied hierarchically so joints always stay attached.
-		</p>
+		<p>Rotations are applied hierarchically so joints always stay attached.</p>
 
 		<figure>
-			<img src="../HW1_Screenshots/T3S1.png"
-
+			<img src="../HW1_Screenshots/T3S1.png" alt="Cubeman waving mid-stride">
 			<figcaption>Cubeman waving mid-stride — <code>my_robot.svg</code>.</figcaption>
 		</figure>
 
-		<!-- ---- Extra Credit: Viewport Rotation ---- -->
 		<h3>Extra Credit: Viewport Rotation with <kbd>[</kbd> / <kbd>]</kbd></h3>
-
 		<p>
 			Pressing <kbd>]</kbd> rotates the viewport 15° clockwise; <kbd>[</kbd> rotates 15° counter-clockwise. <kbd>Space</kbd> resets pan, zoom, and rotation.
 		</p>
@@ -483,202 +713,106 @@ max_y =  ceil( max(y0, y1, y2) )</pre>
 			Where <code>R_ndc = translate(0.5, 0.5) · rotate(−θ) · translate(−0.5, −0.5)</code>. This is done once per frame; no changes are needed to the SVG or rasterizer code.
 		</p>
 		<ul>
-			<li>
-				Code changes: new <code>view_rotation</code> field, added <code>full_transform()</code> to build the combined transform, updated event handling and drawing logic to use these.
-			</li>
+			<li>Code changes: new <code>view_rotation</code> field, added <code>full_transform()</code> to build the combined transform, updated event handling and drawing logic to use these.</li>
 		</ul>
 
 		<figure>
-			<img src="../HW1_Screenshots/T3S2.png" alt="Screenshot of my_robot.svg after 45 degree viewport rotation.">
-			
-			<figcaption>
-				Viewport rotated 45° clockwise with <kbd>]</kbd> ×3 —
-				<code>my_robot.svg</code>.
-			</figcaption>
+			<img src="../HW1_Screenshots/T3S2.png" alt="Viewport rotated 45° clockwise.">
+			<figcaption>Viewport rotated 45° clockwise with <kbd>]</kbd> &times;3 — <code>my_robot.svg</code>.</figcaption>
 		</figure>
-<br><br><br>
-		<p style="font-style: italic; color: #555;">
-			For fun, I (tried to) make a second version of cubeman doing a headstand, saved as
-			<img src="../HW1_Screenshots/T3MISC.png">
-			<figcaption>
-				<code>svg/transforms/handstand_robot.svg</code>.
-			</figcaption>
+
+		<p style="font-style: italic; color: var(--text-muted); margin-top: 24px;">
+			For fun, I (tried to) make a second version of cubeman doing a headstand, saved as <code>svg/transforms/handstand_robot.svg</code>.
 		</p>
+		<figure>
+			<img src="../HW1_Screenshots/T3MISC.png" alt="Cubeman headstand attempt">
+		</figure>
+	</section>
 
-
-
-
-
-
-
-
-
-
-
-		<!-- ============================================================ -->
-		<h2>Task 4</h2>
+	<!-- ── Task 4 ── -->
+	<section class="section" id="task4">
+		<div class="section-tag">Task 4</div>
+		<h2>Barycentric Coordinates</h2>
 
 		<p>
-			Barycentric coordinates are a way of expressing any point inside a triangle as a weighted combination of the triangle's three vertices.
-			For a triangle with vertices <strong>A</strong>, <strong>B</strong>, and <strong>C</strong>, any interior point <strong>P</strong>
-			can be written as:
+			Barycentric coordinates are a way of expressing any point inside a triangle as a weighted combination of the triangle's three vertices. For a triangle with vertices <strong>A</strong>, <strong>B</strong>, and <strong>C</strong>, any interior point <strong>P</strong> can be written as:
 		</p>
-		<p style="text-align: center;">
+		<p style="text-align: center; margin: 20px 0;">
 			<strong>P</strong> = &alpha;&thinsp;<strong>A</strong> + &beta;&thinsp;<strong>B</strong> + &gamma;&thinsp;<strong>C</strong>,
 			&nbsp;&nbsp; where &alpha; + &beta; + &gamma; = 1 and &alpha;, &beta;, &gamma; &ge; 0.
 		</p>
 		<p>
-			Intuitively, each weight (&alpha;, &beta;, &gamma;) tells you how "close" the point is to the corresponding vertex — or equivalently,
-			the weight for a vertex equals the fraction of the total triangle area occupied by the sub-triangle formed by
-			<strong>P</strong> and the two <em>opposite</em> vertices. A point sitting exactly on vertex <strong>A</strong> has
-			(&alpha;, &beta;, &gamma;) = (1, 0, 0); the centroid has (1/3, 1/3, 1/3).
+			Intuitively, each weight (&alpha;, &beta;, &gamma;) tells you how "close" the point is to the corresponding vertex — or equivalently, the weight for a vertex equals the fraction of the total triangle area occupied by the sub-triangle formed by <strong>P</strong> and the two <em>opposite</em> vertices. A point sitting exactly on vertex <strong>A</strong> has (&alpha;, &beta;, &gamma;) = (1, 0, 0); the centroid has (1/3, 1/3, 1/3).
 		</p>
-		
-		<p style="text-align: center;">
+		<p style="text-align: center; margin: 20px 0;">
 			<strong>C(P)</strong> = &alpha;&thinsp;<strong>C<sub>A</sub></strong> + &beta;&thinsp;<strong>C<sub>B</sub></strong> + &gamma;&thinsp;<strong>C<sub>C</sub></strong>.
 		</p>
 
-
-<br><br><br>
-
 		<figure>
-			<img src="../HW1_Screenshots/T4S1.png" alt="Screenshot of svg/basic/test7.svg color wheel rendered with sample rate 1">
+			<img src="../HW1_Screenshots/T4S1.png" alt="Color wheel rendered at sample rate 1">
 			<figcaption><code>basic/test7.svg</code> — color wheel rendered at default view, sample rate 1.</figcaption>
 		</figure>
+	</section>
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-		<!-- ============================================================ -->
-		<h2>Task 5</h2>
+	<!-- ── Task 5 ── -->
+	<section class="section" id="task5">
+		<div class="section-tag">Task 5</div>
+		<h2>Pixel Sampling</h2>
 
 		<p>
-			Pixel sampling is the process of determining what color to assign to a screen pixel when that pixel maps onto a texture image.
-			Because the screen pixel and the texture are at different resolutions and orientations, the pixel's center rarely lands exactly on a texel center —
-			we need a rule for reconstructing a color from the discrete texel grid.
+			Pixel sampling is the process of determining what color to assign to a screen pixel when that pixel maps onto a texture image. Because the screen pixel and the texture are at different resolutions and orientations, the pixel's center rarely lands exactly on a texel center — we need a rule for reconstructing a color from the discrete texel grid.
 		</p>
 		<p>
-			<strong>Implementation.</strong> In <code>rasterize_textured_triangle</code>, for each sample inside the triangle I compute its barycentric
-			coordinates (&alpha;, &beta;, &gamma;) and use them to interpolate the per-vertex uv coordinates:
+			<strong>Implementation.</strong> In <code>rasterize_textured_triangle</code>, for each sample inside the triangle I compute its barycentric coordinates (&alpha;, &beta;, &gamma;) and use them to interpolate the per-vertex uv coordinates:
 		</p>
-		<pre>(u, v) = &alpha;&thinsp;(u0,v0) + &beta;&thinsp;(u1,v1) + &gamma;&thinsp;(u2,v2)</pre>
+		<pre>(u, v) = α·(u0,v0) + β·(u1,v1) + γ·(u2,v2)</pre>
 		<p>
-			This (u, v) pair in [0,1]&sup2; is then passed to <code>tex.sample()</code>, which dispatches to either
-			<code>sample_nearest</code> or <code>sample_bilinear</code> depending on the <code>psm</code> flag.
+			This (u, v) pair in [0,1]&sup2; is then passed to <code>tex.sample()</code>, which dispatches to either <code>sample_nearest</code> or <code>sample_bilinear</code> depending on the <code>psm</code> flag.
 		</p>
 		<p>
-			<strong>Nearest-neighbor sampling</strong> simply rounds the continuous texel coordinate (u&thinsp;&times;&thinsp;W, v&thinsp;&times;&thinsp;H)
-			to the nearest integer and returns that single texel's color. It is fast but can produce a blocky or aliased look when the texture is
-			magnified or when fine detail is viewed at an angle, because adjacent screen pixels can suddenly snap to different texels.
+			<strong>Nearest-neighbor sampling</strong> simply rounds the continuous texel coordinate (u&thinsp;&times;&thinsp;W, v&thinsp;&times;&thinsp;H) to the nearest integer and returns that single texel's color. It is fast but can produce a blocky or aliased look when the texture is magnified or when fine detail is viewed at an angle, because adjacent screen pixels can suddenly snap to different texels.
 		</p>
 		<p>
-			<strong>Bilinear sampling</strong> locates the four texels that surround the continuous sample point and blends them with weights
-			proportional to how close the point is to each corner (a weighted average in both x and y).
-			Concretely, for a sample that falls at fractional position (s, t) within a 2&times;2 texel quad:
+			<strong>Bilinear sampling</strong> locates the four texels that surround the continuous sample point and blends them with weights proportional to how close the point is to each corner (a weighted average in both x and y). Concretely, for a sample that falls at fractional position (s, t) within a 2&times;2 texel quad:
 		</p>
 		<pre>color = lerp(lerp(c00, c10, s), lerp(c01, c11, s), t)</pre>
 		<p>
-			This smooths out the discontinuous jumps between texels and produces noticeably softer, more accurate results at sample rate 1,
-			though at a small cost in computation (4 texel fetches instead of 1).
+			This smooths out the discontinuous jumps between texels and produces noticeably softer, more accurate results at sample rate 1, though at a small cost in computation (4 texel fetches instead of 1).
 		</p>
 		<p>
-			<strong>When does the difference matter most?</strong>
-			The gap between the two methods is largest when a single screen pixel maps to a region that straddles a texel boundary —
-			i.e., when the texture is magnified (each screen pixel covers less than one texel) but the sample rate is low.
-			Under nearest sampling, pixels right on a boundary snap to one side and produce harsh color steps or missing thin features
-			(e.g., a latitude/longitude grid line may disappear entirely). Bilinear interpolation smooths the transition and keeps those
-			thin features visible. When the sample rate is already high (e.g., 16 spp), supersampling effectively provides its own
-			sub-pixel blending, so the two methods look more similar. Similarly, when the texture is heavily minified (one pixel covers
-			many texels), both methods look aliased.
+			<strong>When does the difference matter most?</strong> The gap between the two methods is largest when a single screen pixel maps to a region that straddles a texel boundary — i.e., when the texture is magnified (each screen pixel covers less than one texel) but the sample rate is low. Under nearest sampling, pixels right on a boundary snap to one side and produce harsh color steps or missing thin features. Bilinear interpolation smooths the transition and keeps those thin features visible. When the sample rate is already high (e.g., 16 spp), supersampling effectively provides its own sub-pixel blending, so the two methods look more similar.
 		</p>
 
-		<div style="display: flex; flex-direction: column; align-items: center;">
-			<style>
-				.soft-border-table {
-					border-collapse: separate;
-					border-spacing: 0;
-				}
-				.soft-border-table td {
-					border-right: 2px solid #e5e9f2;
-					border-bottom: 2px solid #e5e9f2;
-					padding: 8px 10px;
-					vertical-align: top;
-					text-align: center;
-				}
-				.soft-border-table tr td:last-child {
-					border-right: none;
-				}
-				.soft-border-table tr:last-child td {
-					border-bottom: none;
-				}
-			</style>
-			<table class="soft-border-table">
-			  <tr>
-				<td>
-				  <img src="../HW1_Screenshots/T5S1.png" alt="Nearest sampling, sample rate 1" style="max-width:100%;"><br>
-				  <figcaption>Nearest, sample rate 1</figcaption>
-				</td>
-				<td>
-				  <img src="../HW1_Screenshots/T5S2.png" alt="Bilinear sampling, sample rate 1" style="max-width:100%;"><br>
-				  <figcaption>Bilinear, sample rate 1</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td>
-				  <img src="../HW1_Screenshots/T5S3.png" alt="Nearest sampling, sample rate 16" style="max-width:100%;"><br>
-				  <figcaption>Nearest, sample rate 16</figcaption>
-				</td>
-				<td>
-				  <img src="../HW1_Screenshots/T5S4.png" alt="Bilinear sampling, sample rate 16" style="max-width:100%;"><br>
-				  <figcaption>Bilinear, sample rate 16</figcaption>
-				</td>
-			  </tr>
-			</table>
+		<div class="img-grid-2x2">
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T5S1.png" alt="Nearest sampling, sample rate 1">
+				<figcaption>Nearest, sample rate 1</figcaption>
+			</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T5S2.png" alt="Bilinear sampling, sample rate 1">
+				<figcaption>Bilinear, sample rate 1</figcaption>
+			</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T5S3.png" alt="Nearest sampling, sample rate 16">
+				<figcaption>Nearest, sample rate 16</figcaption>
+			</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T5S4.png" alt="Bilinear sampling, sample rate 16">
+				<figcaption>Bilinear, sample rate 16</figcaption>
+			</div>
 		</div>
+	</section>
 
-
-
-
-
-
-
-
-<br><br><br><br><br>
-
-
-
-
-
-
-
-
-
-		<!-- ============================================================ -->
-		<h2>Task 6
-		</h2>
+	<!-- ── Task 6 ── -->
+	<section class="section" id="task6">
+		<div class="section-tag">Task 6</div>
+		<h2>Level Sampling (Mipmapping)</h2>
 
 		<p>
-			Level sampling (mipmapping) addresses the aliasing that occurs when a screen pixel covers a large area of the texture
-			(minification). Instead of sampling the full-resolution image and getting noisy, aliased results, we pre-compute a sequence
-			of progressively downsampled copies of the texture (the mipmap). For each screen pixel we choose (or blend between)
-			the mipmap level whose resolution roughly matches the footprint of that pixel in texture space, giving a much cleaner result.
+			Level sampling (mipmapping) addresses the aliasing that occurs when a screen pixel covers a large area of the texture (minification). Instead of sampling the full-resolution image and getting noisy, aliased results, we pre-compute a sequence of progressively downsampled copies of the texture (the mipmap). For each screen pixel we choose (or blend between) the mipmap level whose resolution roughly matches the footprint of that pixel in texture space, giving a much cleaner result.
 		</p>
 		<p>
-			<strong>Implementation.</strong> The key quantity is the <em>texture-space footprint</em> of one screen pixel.
-			For a sample at (x, y) inside the triangle, I compute barycentric coordinates for three points ((x,y),
-			(x+1, y), and (x, y+1))and interpolate their uv coordinates to get
-			<code>p_uv</code>, <code>p_dx_uv</code>, and <code>p_dy_uv</code>.
-			Inside <code>Texture::get_level</code> I form the difference vectors
+			<strong>Implementation.</strong> The key quantity is the <em>texture-space footprint</em> of one screen pixel. For a sample at (x, y) inside the triangle, I compute barycentric coordinates for three points ((x,y), (x+1, y), and (x, y+1)) and interpolate their uv coordinates to get <code>p_uv</code>, <code>p_dx_uv</code>, and <code>p_dy_uv</code>. Inside <code>Texture::get_level</code> I form the difference vectors
 		</p>
 		<pre>d_dx = p_dx_uv - p_uv,   d_dy = p_dy_uv - p_uv</pre>
 		<p>
@@ -686,9 +820,7 @@ max_y =  ceil( max(y0, y1, y2) )</pre>
 		</p>
 		<pre>L = max(||(du/dx, dv/dx)||, ||(du/dy, dv/dy)||)
 level = log2(L)</pre>
-		<p>
-			This gives the continuous mipmap level. The three modes then use it as follows:
-		</p>
+		<p>The three modes then use it as follows:</p>
 		<ul>
 			<li><strong>L_ZERO</strong>: always sample mipmap level 0 (full resolution). Fast and uses no extra memory beyond the base texture, but aliases heavily under minification.</li>
 			<li><strong>L_NEAREST</strong>: round the continuous level to the nearest integer and sample that single mipmap. Greatly reduces minification aliasing at almost no extra per-sample cost; adds ~33% memory overhead for the full mipmap pyramid.</li>
@@ -696,357 +828,198 @@ level = log2(L)</pre>
 		</ul>
 
 		<p>
-			The texture used below is <code>img/map.png</code> — a 2058&times;1036 world map — rendered full-screen via
-			<code>svg/texmap/mytest.svg</code>. It is an ideal test case because its latitude/longitude grid lines are
-			thin, high-frequency detail that aliases severely without mipmapping, and they are spread uniformly across
-			the image so minification effects are easy to spot. The screenshots below use sample rate 1.
+			The texture used below is <code>img/map.png</code> — a 2058&times;1036 world map — rendered full-screen via <code>svg/texmap/mytest.svg</code>. It is an ideal test case because its latitude/longitude grid lines are thin, high-frequency detail that aliases severely without mipmapping, and they are spread uniformly across the image so minification effects are easy to spot. Screenshots use sample rate 1.
 		</p>
 
-		<p><strong>Tradeoff summary across all three sampling dimensions:</strong></p>
-		<div style="display: flex; justify-content: center;">
-		  <table style="max-width: 800px; width: 96%; margin: 0.5em 0; border-collapse: separate; border-spacing: 0; background: #fafcff; box-shadow: 0 2px 12px rgba(50,70,100,0.08); border-radius: 12px; overflow: hidden; font-size: 1.01em;">
-		    <thead>
-			<tr style="background: #f0f4fa;">
-			  <th style="padding: 13px 16px; font-weight: 600; color: #375579; border-bottom: 1.5px solid #e3edf8;">Technique</th>
-			  <th style="padding: 13px 16px; font-weight: 600; color: #375579; border-bottom: 1.5px solid #e3edf8;">Speed</th>
-			  <th style="padding: 13px 16px; font-weight: 600; color: #375579; border-bottom: 1.5px solid #e3edf8;">Memory</th>
-			  <th style="padding: 13px 16px; font-weight: 600; color: #375579; border-bottom: 1.5px solid #e3edf8;">Antialiasing quality</th>
-			</tr>
-		    </thead>
-		    <tbody>
-			  <tr style="background: #f9fbfd;">
-			    <td style="padding: 12px 14px 10px 18px; border-bottom: 1px solid #e9eff6;">
-			      <span style="font-weight:600;">Pixel sampling</span><br>
-			      <span style="color:#446;">(P_NEAREST vs&nbsp;P_LINEAR)</span>
-			    </td>
-			    <td style="padding: 12px 10px; border-bottom: 1px solid #e9eff6;">
-			      <span style="white-space:nowrap;">P_NEAREST: 1 fetch</span><br>
-			      <span style="white-space:nowrap;">P_LINEAR: 4 fetches&nbsp;(~4× slower)</span>
-			    </td>
-			    <td style="padding: 12px 10px; border-bottom: 1px solid #e9eff6;">
-			      No extra memory for either mode
-			    </td>
-			    <td style="padding: 12px 10px; border-bottom: 1px solid #e9eff6;">
-			      <span style="color:#2e7e45; font-weight:500;">P_LINEAR smooths magnification artifacts</span><br>
-			      <span style="color:#666;">Negligible effect on minification aliasing</span>
-			    </td>
-			  </tr>
-			  <tr style="background: #f5faff;">
-			    <td style="padding: 12px 14px 10px 18px; border-bottom: 1px solid #e9eff6;">
-			      <span style="font-weight:600;">Level sampling</span><br>
-			      <span style="color:#446;">(L_ZERO vs&nbsp;L_NEAREST vs&nbsp;L_LINEAR)</span>
-			    </td>
-			    <td style="padding: 12px 10px; border-bottom: 1px solid #e9eff6;">
-			      <span>L_ZERO fastest</span><br>
-			      <span>L_NEAREST near-identical</span><br>
-			      <span style="color:#888;">L_LINEAR doubles fetches vs&nbsp;L_NEAREST</span>
-			    </td>
-			    <td style="padding: 12px 10px; border-bottom: 1px solid #e9eff6;">
-			      <span>L_ZERO: base only</span><br>
-			      <span>L_NEAREST/L_LINEAR:&nbsp;<span style="white-space:nowrap;">+33% (mipmap)</span></span>
-			    </td>
-			    <td style="padding: 12px 10px; border-bottom: 1px solid #e9eff6;">
-			      <span style="color:#2e7e45; font-weight:500;">L_NEAREST dramatically reduces minification aliasing</span><br>
-			      <span style="color:#2e7e45; font-weight:500;">L_LINEAR removes mipmap seams</span>
-			    </td>
-			  </tr>
-			  <tr style="background: #f9fbfd;">
-			    <td style="padding: 12px 14px 10px 18px;">
-			      <span style="font-weight:600;">Supersampling</span><br>
-			      <span style="color:#446;">(1 vs 4 vs 9 vs 16 spp)</span>
-			    </td>
-			    <td style="padding: 12px 10px;">
-			      <span>Cost scales linearly with sample count</span><br>
-			      <span style="color:#888;">16× slower at 16 spp</span>
-			    </td>
-			    <td style="padding: 12px 10px;">
-			      <span>Sample buffer grows linearly with sample count</span>
-			    </td>
-			    <td style="padding: 12px 10px;">
-			      <span style="color:#2e7e45; font-weight:500;">Reduces all forms of aliasing</span><br>
-			      <span style="color:#666;">(geometry, texture, color) but expensive for large counts</span>
-			    </td>
-			  </tr>
-		    </tbody>
-		  </table>
-		</div>
-		<p>
-			In practice: <strong>level sampling</strong> gives the best antialiasing-per-cost ratio for minification (one precomputed mipmap
-			solves the problem cheaply). <strong>Bilinear pixel sampling</strong> is cheap and worth always enabling for magnification.
-			<strong>Supersampling</strong> is the most general but also the most expensive — best reserved for geometric edge quality,
-			not texture minification.
-		</p>
-
-		<div style="display: flex; flex-direction: column; align-items: center; margin-top: 1em;">
-			<table style="border-collapse: separate; border-spacing: 0;">
-			  <tr>
-				<td style="border-right: 6px solid #e3e7ec; border-bottom: 6px solid #e3e7ec; padding: 0 14px 0 0;">
-				  <img src="../HW1_Screenshots/T6S2 (LZ PL).png" alt="L_ZERO + P_NEAREST: mytest.svg, sample rate 1, pixel inspector on grid lines;">
-				  <figcaption style="padding-top: 4px;">L_ZERO + P_NEAREST</figcaption>
-				</td>
-				<td style="border-bottom: 6px solid #e3e7ec; padding: 0 0 0 14px;">
-				  <img src="../HW1_Screenshots/T6S2 (LZ PL).png" alt="L_ZERO + P_LINEAR: mytest.svg, sample rate 1, pixel inspector on grid lines;">
-				  <figcaption style="padding-top: 4px;">L_ZERO + P_LINEAR</figcaption>
-				</td>
-			  </tr>
-			  <tr>
-				<td style="border-right: 6px solid #e3e7ec; padding: 14px 14px 0 0;">
-				  <img src="../HW1_Screenshots/T6S3 (LN PN).png" alt="L_NEAREST + P_NEAREST: mytest.svg, sample rate 1, pixel inspector on grid lines;">
-				  <figcaption style="padding-top: 4px;">L_NEAREST + P_NEAREST</figcaption>
-				</td>
-				<td style="padding: 14px 0 0 14px;">
-				  <img src="../HW1_Screenshots/T6S4 (LN PL).png" alt="L_NEAREST + P_LINEAR: mytest.svg, sample rate 1, pixel inspector on grid lines;">
-				  <figcaption style="padding-top: 4px;">L_NEAREST + P_LINEAR</figcaption>
-				</td>
-			  </tr>
+		<h3>Tradeoff summary</h3>
+		<div class="table-wrap">
+			<table>
+				<thead>
+					<tr>
+						<th>Technique</th>
+						<th>Speed</th>
+						<th>Memory</th>
+						<th>Antialiasing quality</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td><strong>Pixel sampling</strong><br><span style="color:var(--text-muted); font-size:12px;">P_NEAREST vs P_LINEAR</span></td>
+						<td>P_NEAREST: 1 fetch<br>P_LINEAR: 4 fetches (~4× slower)</td>
+						<td>No extra memory</td>
+						<td>P_LINEAR smooths magnification artifacts; negligible effect on minification aliasing</td>
+					</tr>
+					<tr>
+						<td><strong>Level sampling</strong><br><span style="color:var(--text-muted); font-size:12px;">L_ZERO vs L_NEAREST vs L_LINEAR</span></td>
+						<td>L_ZERO fastest; L_NEAREST near-identical; L_LINEAR doubles fetches</td>
+						<td>L_ZERO: base only<br>L_NEAREST/L_LINEAR: +33%</td>
+						<td>L_NEAREST dramatically reduces minification aliasing; L_LINEAR removes mipmap seams</td>
+					</tr>
+					<tr>
+						<td><strong>Supersampling</strong><br><span style="color:var(--text-muted); font-size:12px;">1 vs 4 vs 9 vs 16 spp</span></td>
+						<td>Cost scales linearly; 16× slower at 16 spp</td>
+						<td>Sample buffer grows linearly</td>
+						<td>Reduces all forms of aliasing (geometry, texture, color) but expensive for large counts</td>
+					</tr>
+				</tbody>
 			</table>
 		</div>
 
-
-
-
-
-
-
-
-
-
-		
-		<!-- ============================================================ -->
-		<h2>Task 6 Extra Credit</h2>
-
-		<h3>Motivation</h3>
 		<p>
-			Standard mipmapping chooses one isotropic (square) mip level based on the <em>longer</em> axis of the pixel footprint.
-			When a surface is viewed at a steep angle, the footprint in texture space is a long, thin ellipse — e.g. 32 texels wide
-			but only 2 texels tall. Isotropic mipmapping would pick level log<sub>2</sub>(32)&nbsp;=&nbsp;5, which is blurred
-			32&times; in <em>both</em> directions. This causes the texture to look blurry along the "short" axis even though there
-			is plenty of resolution available.
-		</p>
-		<p>
-			<strong>Anisotropic filtering</strong> fixes this: it chooses the mip level based on the <em>shorter</em> axis only,
-			then takes multiple samples spread along the <em>longer</em> axis to correctly average the texture in that direction.
-			This keeps sharpness along the minor axis while still filtering correctly along the major axis.
+			In practice: <strong>level sampling</strong> gives the best antialiasing-per-cost ratio for minification. <strong>Bilinear pixel sampling</strong> is cheap and worth always enabling for magnification. <strong>Supersampling</strong> is the most general but also the most expensive — best reserved for geometric edge quality, not texture minification.
 		</p>
 
-		<h3>Algorithm</h3>
-		<ol>
-			<li>
-				Compute the two footprint vectors in texel space from the uv derivatives already available in
-				<code>SampleParams</code>:
-				<pre>(du/dx, dv/dx) and (du/dy, dv/dy), each scaled by (width, height)</pre>
-			</li>
-			<li>
-				Find the <strong>major axis</strong> (longer footprint vector) and the <strong>minor axis</strong> (shorter one).
-			</li>
-			<li>
-				Choose the mip level from <code>log2(minor_len)</code> instead of <code>log2(major_len)</code>.
-				This avoids over-blurring in the minor direction.
-			</li>
-			<li>
-				Compute the <strong>anisotropy ratio</strong> = major_len / minor_len, capped at
-				<code>MAX_ANISO = 8</code> taps.
-			</li>
-			<li>
-				Take <code>n_taps</code> bilinear samples evenly spaced along the major axis, centered on
-				<code>p_uv</code>, and average them. Each tap uses trilinear interpolation between the two
-				adjacent mip levels at the chosen fine level.
-			</li>
-		</ol>
-
-
-		<h3>Performance</h3>
-		<p>
-			Each call to <code>Texture::sample()</code> records the elapsed CPU time with
-			<code>clock()</code> into per-method accumulators
-			(<code>Texture::sample_time[4]</code>, <code>Texture::sample_count[4]</code>).
-			Pressing <kbd>T</kbd> in the GUI to prints a timing report to stdout. Representative results
-			on the world-map SVG at default zoom (sample rate 1):
-		</p>
-		<table style="width: 80%; margin: 0 auto; border-collapse: separate; border-spacing: 0; background: #fafcff; box-shadow: 0 2px 12px rgba(50,70,100,0.08); border-radius: 12px; overflow: hidden; font-size: 1.03em;">
-		  <thead>
-			<tr style="background: #f0f4fa;">
-			  <th style="padding: 13px 16px; font-weight: 600; color: #375579; border-bottom: 1.5px solid #e3edf8; border-top-left-radius: 12px;">Method</th>
-			  <th style="padding: 13px 16px; font-weight: 600; color: #375579; border-bottom: 1.5px solid #e3edf8;">Approx. ns/call</th>
-			  <th style="padding: 13px 16px; font-weight: 600; color: #375579; border-bottom: 1.5px solid #e3edf8; border-top-right-radius: 12px;">Relative cost</th>
-			</tr>
-		  </thead>
-		  <tbody>
-			<tr style="background: #fff;">
-			  <td style="padding: 11px 16px; border-bottom: 1px solid #edf3f8;">L_ZERO + P_NEAREST</td>
-			  <td style="padding: 11px 16px; border-bottom: 1px solid #edf3f8;">~10–20 ns</td>
-			  <td style="padding: 11px 16px; border-bottom: 1px solid #edf3f8;">1&times; (baseline)</td>
-			</tr>
-			<tr style="background: #fafafd;">
-			  <td style="padding: 11px 16px; border-bottom: 1px solid #edf3f8;">L_ZERO + P_LINEAR</td>
-			  <td style="padding: 11px 16px; border-bottom: 1px solid #edf3f8;">~30–50 ns</td>
-			  <td style="padding: 11px 16px; border-bottom: 1px solid #edf3f8;">~3&times;</td>
-			</tr>
-			<tr style="background: #fff;">
-			  <td style="padding: 11px 16px; border-bottom: 1px solid #edf3f8;">L_NEAREST + P_LINEAR (trilinear)</td>
-			  <td style="padding: 11px 16px; border-bottom: 1px solid #edf3f8;">~60–100 ns</td>
-			  <td style="padding: 11px 16px; border-bottom: 1px solid #edf3f8;">~5–6&times;</td>
-			</tr>
-			<tr style="background: #fafafd;">
-			  <td style="padding: 11px 16px;">L_ANISO (up to 8 taps)</td>
-			  <td style="padding: 11px 16px;">~150–400 ns</td>
-			  <td style="padding: 11px 16px;">~10–20&times;</td>
-			</tr>
-		  </tbody>
-		</table>
-		<p>
-			Anisotropic filtering is 10–20&times; more expensive than the simplest method, but
-			the visual quality gain on oblique surfaces is dramatic — and it is still far cheaper
-			than raising the supersample rate to achieve equivalent quality.
-		</p>
-
-		<h3>Visual Comparisons</h3>
-		<p>
-			All screenshots below use <code>svg/texmap/mytest.svg</code> (world map, 800&times;400 viewport),
-			sample rate 1. The pixel inspector is placed on the equatorial grid lines (a region where the
-			texture footprint is nearly isotropic).
-		</p>
-		<style>
-		  .soft-border-table {
-		    border-collapse: separate;
-		    border-spacing: 0;
-		  }
-		  .soft-border-table td {
-		    border-right: 2px solid #e5e9f2;
-		    border-bottom: 2px solid #e5e9f2;
-		    padding: 8px 10px;
-		    vertical-align: top;
-		  }
-		  .soft-border-table tr td:last-child {
-		    border-right: none;
-		  }
-		  .soft-border-table tr:last-child td {
-		    border-bottom: none;
-		  }
-		</style>
-
-		<div style="display: flex; flex-direction: column; align-items: center;">
-		  <table class="soft-border-table">
-			<tr>
-			  <td>
-				<img src="../HW1_Screenshots/T6S5 (LZ PN).png" alt="L_ZERO + P_NEAREST, sample rate 1" style="max-width:100%;">
-				<figcaption>L_ZERO + P_NEAREST (baseline — worst aliasing)</figcaption>
-			  </td>
-			  <td>
-				<img src="../HW1_Screenshots/T6S6 (LZ PL).png" alt="L_ZERO + P_LINEAR, sample rate 1" style="max-width:100%;">
+		<div class="img-grid-2x2">
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T6S2 (LZ PL).png" alt="L_ZERO + P_NEAREST">
+				<figcaption>L_ZERO + P_NEAREST</figcaption>
+			</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T6S2 (LZ PL).png" alt="L_ZERO + P_LINEAR">
 				<figcaption>L_ZERO + P_LINEAR</figcaption>
-			  </td>
-			</tr>
-			<tr>
-			  <td>
-				<img src="../HW1_Screenshots/T6S7 (LN PL).png" alt="L_NEAREST + P_LINEAR (trilinear), sample rate 1" style="max-width:100%;">
-				<figcaption>L_NEAREST + P_LINEAR (trilinear)</figcaption>
-			  </td>
-			  <td>
-				<img src="../HW1_Screenshots/T6S8 (LA).png" alt="L_ANISO, sample rate 1" style="max-width:100%;">
-				<figcaption>L_ANISO (anisotropic, up to 8 taps)</figcaption>
-			  </td>
-			</tr>
-			<tr>
-
-			</tr>
-		  </table>
+			</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T6S3 (LN PN).png" alt="L_NEAREST + P_NEAREST">
+				<figcaption>L_NEAREST + P_NEAREST</figcaption>
+			</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T6S4 (LN PL).png" alt="L_NEAREST + P_LINEAR">
+				<figcaption>L_NEAREST + P_LINEAR</figcaption>
+			</div>
 		</div>
 
+		<h3>Extra Credit: Anisotropic Filtering</h3>
 
+		<h4>Motivation</h4>
+		<p>
+			Standard mipmapping chooses one isotropic (square) mip level based on the <em>longer</em> axis of the pixel footprint. When a surface is viewed at a steep angle, the footprint in texture space is a long, thin ellipse — e.g. 32 texels wide but only 2 texels tall. Isotropic mipmapping would pick level log<sub>2</sub>(32)&nbsp;=&nbsp;5, which is blurred 32&times; in <em>both</em> directions. This causes the texture to look blurry along the "short" axis even though there is plenty of resolution available.
+		</p>
+		<p>
+			<strong>Anisotropic filtering</strong> fixes this: it chooses the mip level based on the <em>shorter</em> axis only, then takes multiple samples spread along the <em>longer</em> axis to correctly average the texture in that direction. This keeps sharpness along the minor axis while still filtering correctly along the major axis.
+		</p>
 
+		<h4>Algorithm</h4>
+		<ol>
+			<li>Compute the two footprint vectors in texel space from the uv derivatives already available in <code>SampleParams</code>: <pre>(du/dx, dv/dx) and (du/dy, dv/dy), each scaled by (width, height)</pre></li>
+			<li>Find the <strong>major axis</strong> (longer footprint vector) and the <strong>minor axis</strong> (shorter one).</li>
+			<li>Choose the mip level from <code>log2(minor_len)</code> instead of <code>log2(major_len)</code>. This avoids over-blurring in the minor direction.</li>
+			<li>Compute the <strong>anisotropy ratio</strong> = major_len / minor_len, capped at <code>MAX_ANISO = 8</code> taps.</li>
+			<li>Take <code>n_taps</code> bilinear samples evenly spaced along the major axis, centered on <code>p_uv</code>, and average them. Each tap uses trilinear interpolation between the two adjacent mip levels at the chosen fine level.</li>
+		</ol>
 
+		<h4>Performance</h4>
+		<p>
+			Each call to <code>Texture::sample()</code> records the elapsed CPU time with <code>clock()</code> into per-method accumulators. Pressing <kbd>T</kbd> in the GUI prints a timing report to stdout. Representative results on the world-map SVG at default zoom (sample rate 1):
+		</p>
 
-
-
-
-
-
-
-
-
-
-
-
-		<!-- ============================================================ -->
-		<h2>Task 7: Galactic Spiral</h2>
+		<div class="table-wrap">
+			<table>
+				<thead>
+					<tr>
+						<th>Method</th>
+						<th>Approx. ns/call</th>
+						<th>Relative cost</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>L_ZERO + P_NEAREST</td>
+						<td>~10–20 ns</td>
+						<td>1&times; (baseline)</td>
+					</tr>
+					<tr>
+						<td>L_ZERO + P_LINEAR</td>
+						<td>~30–50 ns</td>
+						<td>~3&times;</td>
+					</tr>
+					<tr>
+						<td>L_NEAREST + P_LINEAR (trilinear)</td>
+						<td>~60–100 ns</td>
+						<td>~5–6&times;</td>
+					</tr>
+					<tr>
+						<td>L_ANISO (up to 8 taps)</td>
+						<td>~150–400 ns</td>
+						<td>~10–20&times;</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
 
 		<p>
-			The submission is <code>docs/competition.svg</code> — a procedurally generated face-on barred spiral galaxy
-			rendered entirely from <code>colortri</code> elements, with no paths, gradients, or raster images.
+			Anisotropic filtering is 10–20&times; more expensive than the simplest method, but the visual quality gain on oblique surfaces is dramatic — and it is still far cheaper than raising the supersample rate to achieve equivalent quality.
+		</p>
+
+		<h4>Visual Comparisons</h4>
+		<p>All screenshots use <code>svg/texmap/mytest.svg</code> (world map, 800&times;400 viewport), sample rate 1.</p>
+
+		<div class="img-grid-2x2">
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T6S5 (LZ PN).png" alt="L_ZERO + P_NEAREST">
+				<figcaption>L_ZERO + P_NEAREST (baseline — worst aliasing)</figcaption>
+			</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T6S6 (LZ PL).png" alt="L_ZERO + P_LINEAR">
+				<figcaption>L_ZERO + P_LINEAR</figcaption>
+			</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T6S7 (LN PL).png" alt="L_NEAREST + P_LINEAR">
+				<figcaption>L_NEAREST + P_LINEAR (trilinear)</figcaption>
+			</div>
+			<div class="img-cell">
+				<img src="../HW1_Screenshots/T6S8 (LA).png" alt="L_ANISO">
+				<figcaption>L_ANISO (anisotropic, up to 8 taps)</figcaption>
+			</div>
+		</div>
+	</section>
+
+	<!-- ── Task 7 ── -->
+	<section class="section" id="task7">
+		<div class="section-tag">Task 7</div>
+		<h2>Galactic Spiral</h2>
+
+		<p>
+			The submission is <code>docs/competition.svg</code> — a procedurally generated face-on barred spiral galaxy rendered entirely from <code>colortri</code> elements, with no paths, gradients, or raster images.
 		</p>
 
 		<figure>
-			<placeholder>
-				800&times;800 screenshot of <code>docs/competition.svg</code> rendered with the draw binary
-				at sample rate 1 (default). The image should show a deep-space spiral galaxy:
-				near-black background with scattered white/blue/orange star points; a large dark-violet
-				halo disk fading toward a glowing amber core; two logarithmic spiral arms sweeping
-				outward from the nucleus — bright gold at the root transitioning through crimson-orange
-				to deep violet at the tips; bright knots of blue-white star clusters dotting the arms;
-				a tilted central bar of warm white/gold crossing the nucleus; and a brilliant white/yellow
-				point-source core burst at the very centre.
-			</placeholder>
+			<img src="../HW1_Screenshots/T7S1.png" alt="Competition: Procedural Spiral Galaxy" style="border-radius: 10px;">
 			<figcaption><em>Galactic Spiral</em> — procedurally generated, 5936 <code>colortri</code> elements, 800&times;800.</figcaption>
 		</figure>
 
 		<h3>How it works</h3>
 		<p>
-			The scene is generated by <code>src/gen_competition.py</code> (run with <code>python3 src/gen_competition.py</code>,
-			which writes <code>docs/competition.svg</code>). It builds the scene in seven layers, drawn back-to-front
-			using the painter's algorithm:
+			The scene is generated by <code>src/gen_competition.py</code> (run with <code>python3 src/gen_competition.py</code>, which writes <code>docs/competition.svg</code>). It builds the scene in seven layers, drawn back-to-front using the painter's algorithm:
 		</p>
 		<ol>
-			<li>
-				<strong>Background.</strong> Two triangles fill the 800&times;800 canvas with a near-black
-				(R=0, G=0, B=0.02) colour.
-			</li>
-			<li>
-				<strong>Outer halo / disk.</strong> Six concentric rings of 120-segment triangle fans, each ring
-				interpolating from deep indigo at the rim through dark violet toward an amber inner edge.
-				The ring radii are spaced with a 1.5-power curve so the inner rings are denser.
-			</li>
-			<li>
-				<strong>Spiral arms.</strong> Two logarithmic spiral arms offset 180° apart, each parameterised as
-				<code>r = r&#x2080; &middot; e<sup>k&thinsp;&theta;</sup></code> with <code>k&nbsp;=&nbsp;0.22</code>.
-				Each arm is tessellated into 240 thin ribbon quads (two triangles each). The quad width
-				grows from 18 px at the nucleus to 55 px at the tip. Vertex colours sweep from bright gold
-				at the root through crimson-orange to deep violet at the tip. A brighter spine ridge is
-				layered on top of the inner half of each arm.
-			</li>
-			<li>
-				<strong>Central bar.</strong> A 60-segment ribbon of warm-white/gold triangles crossing the
-				nucleus at 25°, tapering in width toward the ends.
-			</li>
-			<li>
-				<strong>Star clusters.</strong> 18 HII-region knots of 35 tiny random triangles each, placed
-				at random points along the two arm spines with a Gaussian spatial spread. Colours are
-				blue-white with random brightness to simulate hot young stars.
-			</li>
-			<li>
-				<strong>Core burst.</strong> Three concentric triangle fans (180 segments each) building up
-				from a pure-white inner disk through warm yellow to amber, simulating the central AGN glow.
-			</li>
-			<li>
-				<strong>Star field.</strong> ~1,400 tiny equilateral triangles at random positions across
-				the canvas (avoiding the bright core), with random size (0.4–2.5 px), colour
-				(white/blue/orange/yellow), and brightness — giving the illusion of distant stars.
-			</li>
+			<li><strong>Background.</strong> Two triangles fill the 800&times;800 canvas with a near-black (R=0, G=0, B=0.02) colour.</li>
+			<li><strong>Outer halo / disk.</strong> Six concentric rings of 120-segment triangle fans, each ring interpolating from deep indigo at the rim through dark violet toward an amber inner edge. The ring radii are spaced with a 1.5-power curve so the inner rings are denser.</li>
+			<li><strong>Spiral arms.</strong> Two logarithmic spiral arms offset 180° apart, each parameterised as <code>r = r&#x2080; &middot; e<sup>k&thinsp;&theta;</sup></code> with <code>k&nbsp;=&nbsp;0.22</code>. Each arm is tessellated into 240 thin ribbon quads (two triangles each). The quad width grows from 18 px at the nucleus to 55 px at the tip. Vertex colours sweep from bright gold at the root through crimson-orange to deep violet at the tip. A brighter spine ridge is layered on top of the inner half of each arm.</li>
+			<li><strong>Central bar.</strong> A 60-segment ribbon of warm-white/gold triangles crossing the nucleus at 25°, tapering in width toward the ends.</li>
+			<li><strong>Star clusters.</strong> 18 HII-region knots of 35 tiny random triangles each, placed at random points along the two arm spines with a Gaussian spatial spread. Colours are blue-white with random brightness to simulate hot young stars.</li>
+			<li><strong>Core burst.</strong> Three concentric triangle fans (180 segments each) building up from a pure-white inner disk through warm yellow to amber, simulating the central AGN glow.</li>
+			<li><strong>Star field.</strong> ~1,400 tiny equilateral triangles at random positions across the canvas (avoiding the bright core), with random size (0.4–2.5 px), colour (white/blue/orange/yellow), and brightness — giving the illusion of distant stars.</li>
 		</ol>
-		<figure style="text-align: center;">
-			<img src="../HW1_Screenshots/T7S1.png" alt="Competition: Procedural Spiral Galaxy — docs/competition.svg" style="max-width: 95%; border-radius: 8px; border: 1.5px solid #bbb;">
-			<figcaption style="font-size: 0.94em; color: #444; margin-top: 6px;">
-				<code>docs/competition.svg</code> &mdash; Procedural Spiral Galaxy ("Competition" render)
-			</figcaption>
-		</figure>
+
 		<p>
-			The entire scene uses only barycentric colour interpolation with no texture maps,
-			no gradients, no paths. The logarithmic spiral arms and concentric halo rings are the
-			most computation-intensive parts of the generator, but the script completes in under
-			a second and produces a single self-contained SVG file.
+			The entire scene uses only barycentric colour interpolation with no texture maps, no gradients, no paths. The logarithmic spiral arms and concentric halo rings are the most computation-intensive parts of the generator, but the script completes in under a second and produces a single self-contained SVG file.
 		</p>
+	</section>
 
-
-		</div>
-	</body>
+</div>
+<script>
+	// ── Theme toggle ──
+	(function() {
+		var saved = localStorage.getItem('theme');
+		var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+		if (saved === 'dark' || (!saved && prefersDark)) {
+			document.documentElement.classList.add('dark');
+		}
+	})();
+	document.getElementById('theme-toggle').addEventListener('click', function() {
+		var isDark = document.documentElement.classList.toggle('dark');
+		localStorage.setItem('theme', isDark ? 'dark' : 'light');
+	});
+</script>
+</body>
 </html>
